@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Viewer</title>
+</head>
+<body>
+<h1>QR Code Viewer</h1>
+<div id="qrContainer">
+    <!-- QR 코드 이미지가 여기 표시될 것입니다. -->
+    <img id="qrImage" alt="QR Code" />
+</div>
+
+<script>
+    // QR 코드 조회 API에서 받은 응답을 가정한 예제 JSON 데이터
+    const response = {
+        safePhoneNumber: "4444",
+        memo: "볼일보러감",
+        myColor: "RED",
+        sticker: "STAR",
+        gradation: 99,
+        qrImage: "iVBORw0KGgoAAAANSUhEUgAAAMgAAADIAQAAAACFI5MzAAAAv0lEQVR4Xt2PQRLAIAwC8/9PpwOLdvoEGjUmLBdmqN2971ttZFWj3R/UvJT4sR981GICWlw/IJls6SYO6KOg/EyVhArz+VYZcSyy+t4qJdr1vS5LupWEFkc8vr1E4pyUeGCVhLAS50bEU0wi45ImoZRop1mSWkzUvQiyvK2QMCStF1ytxMPYoMWCnaXEqTQZR0WoJCnp2uQ4nk6SnHSdG7KU+Hm9IlmrCSM8nmqyvIxRK4lKQhwZa0m4PVx/peQBp/OO8Givb7IAAAAASUVORK5CYII="
+    };
+
+    // qrImage 데이터를 <img> 태그에 설정하는 함수
+    function displayQrCode(qrImage) {
+        // img 요소 선택
+        const qrImgElement = document.getElementById('qrImage');
+
+        // qrImage를 Base64로 인코딩된 이미지로 설정
+        qrImgElement.src = `data:image/png;base64,${qrImage}`;
+    }
+
+    // 함수 호출로 QR 코드 이미지를 표시
+    displayQrCode(response.qrImage);
+</script>
+</body>
+</html>
