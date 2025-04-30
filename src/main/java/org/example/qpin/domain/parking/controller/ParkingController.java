@@ -19,23 +19,24 @@ public class ParkingController {
 
     private final ParkingService parkingService;
 
-    /**
-     * 주변 주차장 정보 탐색
-     */
+    // [Get] 주변 주차장 검색
     @GetMapping("/parking/selectList")
-    public ResponseEntity<List<ParkingSearchResDto>> findParkingNearby(@RequestBody ParkingSearchReqDto parkingSearchReqDto) throws ParseException {
+    public ResponseEntity<CommonResponse<List<ParkingSearchResDto>>> findParkingNearby(@RequestBody ParkingSearchReqDto parkingSearchReqDto) throws ParseException {
 
-        double latitude=parkingSearchReqDto.getLatitude();
-        double longitude=parkingSearchReqDto.getLongtitude();
-        double distance=parkingSearchReqDto.getDistance();
+        Double latitude=parkingSearchReqDto.getLatitude();
+        Double longitude=parkingSearchReqDto.getLongitude();
+        Double distance=parkingSearchReqDto.getDistance();
         String regionCode=parkingSearchReqDto.getRegionCode();
-        return ResponseEntity.status(HttpStatus.OK).body(parkingService.findParkingNearby(latitude, longitude, distance,regionCode ));
+
+        CommonResponse<List<ParkingSearchResDto>> response = parkingService.findParkingNearby(latitude, longitude, distance, regionCode);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     // [Post] 주차하기 버튼
     @PostMapping("/parking/{parkingAreaId}/{memberId}")
     @ResponseBody
-    public CommonResponse<?> parking(@PathVariable("memberId") Long memberId, @PathVariable("parkingAreaId") String parkingAreaId) {
+    public CommonResponse<?> parking(@PathVariable("memberId") Long memberId, @PathVariable("parkingAreaId") Long parkingAreaId) {
         parkingService.postParking(memberId, parkingAreaId);
         return new CommonResponse<>(ResponseCode.SUCCESS);
     }
