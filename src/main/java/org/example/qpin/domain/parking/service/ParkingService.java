@@ -22,7 +22,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -192,31 +191,28 @@ public class ParkingService {
     }
 
     // 현재 주차된 주차장 정보 불러오기
-    public ParkingInfoResDto getParkingInfo(Long memberId, Long parkingAreaId) {
-        findMemberById(memberId);
+    public ParkingInfoResDto getParkingInfo(Long memberId) {
+        Member member = findMemberById(memberId);
 
-        boolean parkingStatus = false; // 주차 여부
-        LocalDateTime parkingDate = null; // 주차 시작한 시간
-        int parkingTime = 0; // 주차한 시간
-
-        // 주차 정보 확인
-        Optional<Parking> parking = parkingRepository.findParkingByParkingAreaIdAndMember(parkingAreaId, memberId);
-        if (parking.isPresent()) {
-            parkingStatus = true;
-            parkingDate = parking.get().getCreatedAt();
-
-            // 주차 시간 계산
-            parkingTime = (int) Duration.between(parkingDate, LocalDateTime.now()).toMinutes();
+        // 멤버가 주차 중인 상태인지를 확인
+        if (!member.isParking()) {
+            throw new BadRequestException(ExceptionCode.NOT_FOUND_PARKING);
         }
 
-        // scrap 상태 확인
-        boolean scrapStatus = scrapRepository.findScrapByParkIdAndMember(parkingAreaId, memberId).isPresent();
+        // 멤버가 주차 중인 주차장 정보를 가져옴
+        Parking parking = parkingRepository.findParkingByMemberIdAndIsParkingTrue(memberId)
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.NOT_FOUND_PARKING));
 
+        // 주차 시작 시간 및 기타 정보를 가져옴
+        LocalDateTime parkingDate = parking.getCreatedAt();
+        int parkingTime = (int) Duration.between(parkingDate, LocalDateTime.now()).toMinutes();
+
+        // 주차장 정보 반환
         return ParkingInfoResDto.builder()
-                .parkingStatus(parkingStatus)
-                .scrapStatus(scrapStatus)
                 .parkingDate(parkingDate)
                 .parkingTime(parkingTime)
+                .parkingAreaId(parking.getParkingAreaId())
+                .parkingType(parking.getType())
                 .build();
     }
 

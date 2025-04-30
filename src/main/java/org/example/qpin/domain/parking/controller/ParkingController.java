@@ -47,8 +47,8 @@ public class ParkingController {
     }
 
     // [Get] 현재 주차한 주차장 정보
-    @GetMapping("/parking/select/{parkingAreaId}/{memberId}")
-    public CommonResponse<ParkingInfoResDto> parkingInfo(@PathVariable("memberId") Long memberId, @PathVariable("parkingAreaId") Long parkingAreaId) {
-        return new CommonResponse<>(ResponseCode.SUCCESS, parkingService.getParkingInfo(memberId, parkingAreaId));
+    @GetMapping("/parking/select/{memberId}")
+    public CommonResponse<ParkingInfoResDto> parkingInfo(@PathVariable("memberId") Long memberId) {
+        return new CommonResponse<>(ResponseCode.SUCCESS, parkingService.getParkingInfo(memberId));
     }
 }
