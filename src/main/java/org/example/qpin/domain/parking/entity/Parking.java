@@ -1,6 +1,9 @@
 package org.example.qpin.domain.parking.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.*;
 import org.example.qpin.global.common.BaseEntity;
 
@@ -15,6 +18,5 @@ public class Parking extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long parkingAreaId;
 
-    @Column(length = 50, nullable = false)
     private String type;
 }

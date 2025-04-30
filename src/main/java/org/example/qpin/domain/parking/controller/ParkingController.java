@@ -33,8 +33,8 @@ public class ParkingController {
 
     // [Post] 주차 등록
     @PostMapping("/parking/{parkingAreaId}/{memberId}")
-    public CommonResponse<String> parking(@PathVariable("memberId") Long memberId, @PathVariable("parkingAreaId") Long parkingAreaId) {
-        parkingService.postParking(memberId, parkingAreaId);
+    public CommonResponse<String> parking(@PathVariable("memberId") Long memberId, @PathVariable("parkingAreaId") Long parkingAreaId, @RequestBody String type) {
+        parkingService.postParking(memberId, parkingAreaId, type);
         return new CommonResponse<>(ResponseCode.SUCCESS, "주차가 완료되었습니다.");
     }
 

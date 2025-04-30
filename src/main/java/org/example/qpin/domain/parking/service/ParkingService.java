@@ -1,6 +1,7 @@
 package org.example.qpin.domain.parking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.qpin.domain.member.entity.Member;
 import org.example.qpin.domain.parking.dto.ParkingInfoResDto;
 import org.example.qpin.domain.parking.dto.ParkingSearchResDto;
 import org.example.qpin.domain.parking.entity.Parking;
@@ -31,12 +32,12 @@ public class ParkingService {
     private final MemberRepository memberRepository;
     private final ScrapRepository scrapRepository;
 
-    public void findMemberById(Long memberId) {
-        memberRepository.findById(memberId).orElseThrow(() -> new BadRequestException(ExceptionCode.NOT_FOUND_MEMBER_ID));
+    public Member findMemberById(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(() -> new BadRequestException(ExceptionCode.NOT_FOUND_MEMBER_ID));
     }
 
-    public void findParkingById(Long parkingAreaId) {
-        parkingRepository.findById(parkingAreaId).orElseThrow(() -> new BadRequestException(ExceptionCode.NOT_FOUND_PARKING));
+    public Parking findParkingById(Long parkingAreaId) {
+        return parkingRepository.findById(parkingAreaId).orElseThrow(() -> new BadRequestException(ExceptionCode.NOT_FOUND_PARKING));
     }
 
     //latitude: 위도, longitude: 경도
@@ -157,26 +158,37 @@ public class ParkingService {
 
 
     // 주차 등록하기
-    public void postParking(Long memberId, Long parkingAreaId) {
-        findMemberById(memberId);
-        findParkingById(parkingAreaId);
+    public void postParking(Long memberId, Long parkingAreaId, String type) {
+        Member member = findMemberById(memberId);
+        Parking parking = findParkingById(parkingAreaId);
+
+        // 해당 멤버가 이미 주차 중인 상태인지 확인
+        if (member.isParking()) {
+            throw new BadRequestException(ExceptionCode.DUPLICATED_ADMIN_USERID);
+        }
 
         Parking newParking = Parking.builder()
                 .parkingAreaId(parkingAreaId)
+                .type(type)
                 .build();
-
         parkingRepository.save(newParking);
+
+        member.setParking(true);
+        memberRepository.save(member);
     }
 
     // 주차 삭제하기
     public void deleteParking(Long memberId, Long parkingAreaId) {
-        findMemberById(memberId);
-        findParkingById(parkingAreaId);
+        Member member = findMemberById(memberId);
+        Parking parking = findParkingById(parkingAreaId);
 
-        Parking parking = parkingRepository.findParkingByParkingAreaIdAndMember(parkingAreaId, memberId)
+        Parking parkingToDelete = parkingRepository.findParkingByParkingAreaIdAndMember(parkingAreaId, memberId)
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.NOT_FOUND_PARKING));
 
-        parkingRepository.delete(parking);
+        parkingRepository.delete(parkingToDelete);
+
+        member.setParking(false);
+        memberRepository.save(member);
     }
 
     // 현재 주차된 주차장 정보 불러오기
