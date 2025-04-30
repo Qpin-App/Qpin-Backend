@@ -1,17 +1,14 @@
 package org.example.qpin.domain.parking.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.qpin.domain.member.entity.Member;
 import org.example.qpin.domain.parking.dto.ParkingInfoResDto;
 import org.example.qpin.domain.parking.dto.ParkingSearchResDto;
 import org.example.qpin.domain.parking.entity.Parking;
-import org.example.qpin.domain.scrap.entity.Scrap;
 import org.example.qpin.global.common.repository.MemberRepository;
 import org.example.qpin.global.common.repository.ParkingRepository;
 import org.example.qpin.global.common.repository.ScrapRepository;
-import org.example.qpin.global.common.response.CommonResponse;
-import org.example.qpin.global.common.response.ResponseCode;
 import org.example.qpin.global.exception.BadRequestException;
+import org.example.qpin.global.exception.ExceptionCode;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -26,8 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.example.qpin.global.exception.ExceptionCode.NOT_FOUND_PARKING;
-
 @Service
 @RequiredArgsConstructor
 public class ParkingService {
@@ -36,8 +31,12 @@ public class ParkingService {
     private final MemberRepository memberRepository;
     private final ScrapRepository scrapRepository;
 
-    public Member findMemberById(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow();
+    public void findMemberById(Long memberId) {
+        memberRepository.findById(memberId).orElseThrow(() -> new BadRequestException(ExceptionCode.NOT_FOUND_MEMBER_ID));
+    }
+
+    public void findParkingById(Long parkingAreaId) {
+        parkingRepository.findById(parkingAreaId).orElseThrow(() -> new BadRequestException(ExceptionCode.NOT_FOUND_PARKING));
     }
 
     //latitude: 위도, longitude: 경도
@@ -46,9 +45,9 @@ public class ParkingService {
      * 위도, 경도, 거리, 지역 코드를 입력하면
      * 해당 위치로부터 입력한 거리 이내의 주차장의 정보를 반환함.
      */
-    public CommonResponse<List<ParkingSearchResDto>> findParkingNearby(Double mylatitude, Double mylongitude, Double distance, String regionCode) throws ParseException {
-        if (mylatitude == null || mylongitude == null || distance == null || regionCode == null) {
-            return new CommonResponse<>(ResponseCode.NOTFOUND);
+    public List<ParkingSearchResDto> findParkingNearby(Double myLatitude, Double myLongitude, Double distance, String regionCode) throws ParseException {
+        if (myLatitude == null || myLongitude == null || distance == null || regionCode == null) {
+            throw new BadRequestException(ExceptionCode.NOT_FOUND);
         }
 
         // 공공포털에서 데이터 가져오기
@@ -78,7 +77,7 @@ public class ParkingService {
                     .block();
         } catch (Exception e) {
             // 서버 연결 실패
-            return new CommonResponse<>(ResponseCode.FAILED);
+            throw new BadRequestException(ExceptionCode.INTERNAL_SEVER_ERROR);
         }
 
 
@@ -91,26 +90,26 @@ public class ParkingService {
             dataList = (JSONArray) jsonObject.get("data");
         } catch (Exception e) {
             // JSON 파싱 오류 시 500번대 에러 반환
-            return new CommonResponse<>(ResponseCode.FAILED);
+            throw new BadRequestException(ExceptionCode.INTERNAL_SEVER_ERROR);
         }
 
         // 데이터가 없으면 빈 리스트로 반환
         if (dataList == null || dataList.isEmpty()) {
-            return new CommonResponse<>(ResponseCode.SUCCESS, new ArrayList<>());
+            return new ArrayList<>();
         }
 
         List<ParkingSearchResDto> parkingSearchResDtoList =new ArrayList<>();
-        for(int i=0; i<dataList.size(); i++){
-            JSONObject data=(JSONObject) dataList.get(i);
+        for (Object obj : dataList){
+            JSONObject data = (JSONObject) obj;
             double latitude=Double.parseDouble((String) data.get("위도"));
             double longitude=Double.parseDouble((String) data.get("경도"));
             /*
              * 설정한 거리보다 가까운 주차장만 리스트에 추가
              */
 
-            double parkingDistance = distance(mylatitude, mylongitude, latitude, longitude);
-            if(distance>=parkingDistance){
-                ParkingSearchResDto parkingSearchResDto = new ParkingSearchResDto().builder()
+            double parkingDistance = distance(myLatitude, myLongitude, latitude, longitude);
+            if(distance>=parkingDistance) {
+                ParkingSearchResDto parkingSearchResDto = ParkingSearchResDto.builder()
                         .latitude(latitude)
                         .longitude(longitude)
                         .parkId(Long.parseLong((String) data.get("주차장번호")))
@@ -130,7 +129,7 @@ public class ParkingService {
             }
         }
 
-        return new CommonResponse<>(ResponseCode.SUCCESS, parkingSearchResDtoList);
+        return parkingSearchResDtoList;
     }
 
     // 두 좌표 사이의 거리를 구하는 함수
@@ -155,58 +154,51 @@ public class ParkingService {
         return (rad * 180 / Math.PI);
     }
 
+
+
     // 주차 등록하기
     public void postParking(Long memberId, Long parkingAreaId) {
-        Member member = findMemberById(memberId);
+        findMemberById(memberId);
+        findParkingById(parkingAreaId);
 
         Parking newParking = Parking.builder()
                 .parkingAreaId(parkingAreaId)
                 .build();
 
         parkingRepository.save(newParking);
-        return;
     }
 
     // 주차 삭제하기
-    public void deleteParking(Long memberId, String parkingAreaId) {
-        Member member = findMemberById(memberId);
+    public void deleteParking(Long memberId, Long parkingAreaId) {
+        findMemberById(memberId);
+        findParkingById(parkingAreaId);
 
-        Parking parking = parkingRepository.findParkingByParkingAreaIdAndMember(parkingAreaId, member)
-                .orElseThrow(() -> new BadRequestException(NOT_FOUND_PARKING));
+        Parking parking = parkingRepository.findParkingByParkingAreaIdAndMember(parkingAreaId, memberId)
+                .orElseThrow(() -> new BadRequestException(ExceptionCode.NOT_FOUND_PARKING));
 
         parkingRepository.delete(parking);
-        return;
     }
 
     // 현재 주차된 주차장 정보 불러오기
-    public ParkingInfoResDto getParkingInfo(Long memberId, String parkingAreaId) {
-        Member member = findMemberById(memberId);
+    public ParkingInfoResDto getParkingInfo(Long memberId, Long parkingAreaId) {
+        findMemberById(memberId);
 
-        // parkingStatus, parkingDate, parkingTime
-        boolean parkingStatus;
-        LocalDateTime parkingDate = null;
-        int parkingTime = 0;
+        boolean parkingStatus = false; // 주차 여부
+        LocalDateTime parkingDate = null; // 주차 시작한 시간
+        int parkingTime = 0; // 주차한 시간
 
-        Optional<Parking> parking = parkingRepository.findParkingByParkingAreaIdAndMember(parkingAreaId, member);
+        // 주차 정보 확인
+        Optional<Parking> parking = parkingRepository.findParkingByParkingAreaIdAndMember(parkingAreaId, memberId);
         if (parking.isPresent()) {
             parkingStatus = true;
             parkingDate = parking.get().getCreatedAt();
 
-            LocalDateTime now = LocalDateTime.now();
-            Duration duration = Duration.between(parkingDate, now);
-            parkingTime = (int) duration.toMinutes(); // 분 단위로 반환하여 전송
-        } else {
-            parkingStatus = false;
+            // 주차 시간 계산
+            parkingTime = (int) Duration.between(parkingDate, LocalDateTime.now()).toMinutes();
         }
 
-        // scrapStatus
-        boolean scrapStatus;
-        Optional<Scrap> scrap = scrapRepository.findScrapByParkIdAndMember(parkingAreaId, member);
-        if (scrap.isPresent()) {
-            scrapStatus = true;
-        } else {
-            scrapStatus = false;
-        }
+        // scrap 상태 확인
+        boolean scrapStatus = scrapRepository.findScrapByParkIdAndMember(parkingAreaId, memberId).isPresent();
 
         return ParkingInfoResDto.builder()
                 .parkingStatus(parkingStatus)

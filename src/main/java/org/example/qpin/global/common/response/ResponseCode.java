@@ -7,9 +7,9 @@ public enum ResponseCode {
     /*
         200번대 : 성공 관련
     */
-    SUCCESS(200, true, "요청에 성공하였습니다."),
-    NOTFOUND(400, false, "요청값이 잘못됐습니다."),
-    FAILED(500, false, "서버에러. 요청에 실패하였습니다.");
+    SUCCESS(2000, true, "요청에 성공하였습니다."),
+    NOTFOUND(4000, false, "요청값이 잘못됐습니다."),
+    FAILED(5000, false, "서버에러. 요청에 실패하였습니다.");
 
     private int code;
     private boolean inSuccess;
