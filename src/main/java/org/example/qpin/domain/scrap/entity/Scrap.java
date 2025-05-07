@@ -21,6 +21,9 @@ public class Scrap extends BaseEntity {
     @JoinColumn(name = "parking_id")
     private Parking parking;
 
+    @Column(name = "parking_id")
+    private String parkId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
