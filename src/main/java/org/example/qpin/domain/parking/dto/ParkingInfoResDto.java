@@ -13,9 +13,8 @@ import java.time.LocalDateTime;
 @Builder
 public class ParkingInfoResDto {
 
-    private boolean parkingStatus;
-    private boolean scrapStatus;
-    private LocalDateTime parkingDate;
-    private int parkingTime;
-
+    private LocalDateTime parkingDate;  // 주차 시작 시간
+    private int parkingTime;  // 주차한 시간(분 단위)
+    private Long parkingAreaId;  // 주차장 ID
+    private String parkingType;  // 주차장 유형
 }

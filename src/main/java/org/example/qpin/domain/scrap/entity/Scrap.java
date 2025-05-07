@@ -3,6 +3,7 @@ package org.example.qpin.domain.scrap.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.qpin.domain.member.entity.Member;
+import org.example.qpin.domain.parking.entity.Parking;
 import org.example.qpin.global.common.BaseEntity;
 
 @Entity
@@ -16,7 +17,11 @@ public class Scrap extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scrapId;
 
-    @Column(length = 20, nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parking_id")
+    private Parking parking;
+
+    @Column(name = "parking_id")
     private String parkId;
 
     @ManyToOne(fetch = FetchType.LAZY)

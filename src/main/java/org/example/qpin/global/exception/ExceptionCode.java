@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 public enum ExceptionCode {
 
     INVALID_REQUEST(1000, "올바르지 않은 요청입니다."),
+    NOT_FOUND(4000, "입력한 데이터가 올바르지 않습니다."),
 
     // 멤버 에러
     NOT_FOUND_MEMBER_ID(1010, "요청한 ID에 해당하는 멤버가 존재하지 않습니다."),

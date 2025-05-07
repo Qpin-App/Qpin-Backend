@@ -6,7 +6,6 @@ import org.example.qpin.domain.insurance.entity.Insurance;
 import org.example.qpin.domain.scrap.entity.Scrap;
 import org.example.qpin.global.common.BaseEntity;
 
-import java.security.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,5 +67,14 @@ public class Member extends BaseEntity {
 //        this.email = email;
         this.role = role;
 //        this.phoneNumber = phoneNumber;
+    }
+
+    // 주차 여부
+    @Column(nullable = false)
+    private boolean isParking;
+
+    // 주차 여부를 설정
+    public void setParking(boolean isParking) {
+        this.isParking = isParking;
     }
 }
