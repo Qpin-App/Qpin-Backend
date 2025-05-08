@@ -23,12 +23,12 @@ public class CarPhotoController {
         carPhotoService.saveCarPhoto(carPhotoRequestDto);
     }
 
-    @GetMapping("/selectList")
+    @GetMapping
     public List<CarPhotoResponseDto> getCarPhotoList(@RequestParam Long memberId) {
         return carPhotoService.getCarPhotoList(memberId);
     }
 
-    @DeleteMapping("/remove/{photoId}")
+    @DeleteMapping("/{photoId}")
     public void deleteCarPhoto(@PathVariable Long photoId) {
         carPhotoService.deleteCarPhoto(photoId);
     }

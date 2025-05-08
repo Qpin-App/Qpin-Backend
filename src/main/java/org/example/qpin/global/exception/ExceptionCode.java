@@ -25,6 +25,7 @@ public enum ExceptionCode {
     INVALID_IMAGE_PATH(5101, "이미지를 저장할 경로가 올바르지 않습니다."),
     FAIL_IMAGE_NAME_HASH(5102, "이미지 이름을 해싱하는 데 실패했습니다."),
     INVALID_IMAGE(5103, "올바르지 않은 이미지 파일입니다."),
+    NOT_FOUND_PHOTO(5104, "사진을 찾을 수 없습니다."),
 
     // 주차 에러
     NOT_FOUND_PARKING(6001, "요청한 주차ID와 멤버ID에 해당하는 정보가 존재하지 않습니다."),
