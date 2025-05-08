@@ -52,6 +52,7 @@ public class CarPhotoServiceImpl implements CarPhotoService {
     // 모든 사진 조회
     @Override
     public List<CarPhotoResponseDto> getCarPhotoList(Long memberId) {
+        findMemberById(memberId);
         List<CarPhoto> carPhotos = carPhotoRepository.findByMember_MemberId(memberId);
 
         return carPhotos.stream()
