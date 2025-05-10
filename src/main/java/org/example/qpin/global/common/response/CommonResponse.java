@@ -20,7 +20,6 @@ public class CommonResponse<T> {
         this.code = status.getCode();
         this.inSuccess = status.isInSuccess();
         this.message = status.getMessage();
-
         this.result = result;
     }
 
