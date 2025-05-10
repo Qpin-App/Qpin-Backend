@@ -10,7 +10,9 @@ import org.example.qpin.global.common.response.ResponseCode;
 import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,17 +35,27 @@ public class ParkingController {
 
     // [Post] 주차 등록
     @PostMapping("/parking/{parkingAreaId}/{memberId}")
-    public CommonResponse<String> parking(@PathVariable("memberId") Long memberId, @PathVariable("parkingAreaId") Long parkingAreaId, @RequestBody String type) {
-        parkingService.postParking(memberId, parkingAreaId, type);
-        return new CommonResponse<>(ResponseCode.SUCCESS, "주차가 완료되었습니다.");
+    public CommonResponse<Map<String, String>> parking(@PathVariable("memberId") Long memberId, @PathVariable("parkingAreaId") Long parkingAreaId, @RequestBody String type) {
+        Long postParkingId = parkingService.postParking(memberId, parkingAreaId, type);
+
+        Map<String, String> result = new HashMap<>();
+        result.put("parkingId", String.valueOf(postParkingId));
+        result.put("message", "주차 등록이 완료되었습니다.");
+
+        return new CommonResponse<>(ResponseCode.SUCCESS, result);
     }
 
     // [Delete] 주차 해제
     @DeleteMapping("/parking/{parkingAreaId}/{memberId}")
     @ResponseBody
-    public CommonResponse<String> deleteParking(@PathVariable("memberId") Long memberId, @PathVariable("parkingAreaId") Long parkingAreaId) {
-        parkingService.deleteParking(memberId, parkingAreaId);
-        return new CommonResponse<>(ResponseCode.SUCCESS, "주차 해제가 완료되었습니다.");
+    public CommonResponse<Map<String, String>> deleteParking(@PathVariable("memberId") Long memberId, @PathVariable("parkingAreaId") Long parkingAreaId) {
+        Long deleteParkingId = parkingService.deleteParking(memberId, parkingAreaId);
+
+        Map<String, String> result = new HashMap<>();
+        result.put("parkingId", String.valueOf(deleteParkingId));
+        result.put("message", "주차 해제가 완료되었습니다.");
+
+        return new CommonResponse<>(ResponseCode.SUCCESS, result);
     }
 
     // [Get] 현재 주차한 주차장 정보

@@ -15,6 +15,8 @@ public enum ExceptionCode {
     NOT_FOUND_MEMBER_ID(1010, "요청한 ID에 해당하는 멤버가 존재하지 않습니다."),
     FAIL_TO_CREATE_NEW_MEMBER(1012, "새로운 멤버를 생성하는데 실패하였습니다."),
 
+    // 스크랩 에러
+    NOT_FOUND_SCRAP(7001, "요청한 ID에 해당하는 스크랩이 존재하지 않습니다."),
 
     // 이미지 에러
     EXCEED_IMAGE_CAPACITY(5001, "업로드 가능한 이미지 용량을 초과했습니다."),

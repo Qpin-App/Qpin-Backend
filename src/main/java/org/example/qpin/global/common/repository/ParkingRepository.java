@@ -9,4 +9,5 @@ public interface ParkingRepository extends JpaRepository<Parking, Long> {
 
     Optional<Parking> findParkingByParkingAreaIdAndMember(Long parkingAreaId, Long memberId);
     Optional<Parking> findParkingByMemberIdAndIsParkingTrue(Long memberId);
+    Optional<Parking> findByParkingAreaId(Long parkingAreaId);
 }

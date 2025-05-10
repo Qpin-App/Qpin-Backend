@@ -157,37 +157,46 @@ public class ParkingService {
 
 
     // 주차 등록하기
-    public void postParking(Long memberId, Long parkingAreaId, String type) {
+    public Long postParking(Long memberId, Long parkingAreaId, String type) {
         Member member = findMemberById(memberId);
-        Parking parking = findParkingById(parkingAreaId);
 
         // 해당 멤버가 이미 주차 중인 상태인지 확인
         if (member.isParking()) {
             throw new BadRequestException(ExceptionCode.DUPLICATED_ADMIN_USERID);
         }
 
+        // 새로운 주차 정보 등록
         Parking newParking = Parking.builder()
                 .parkingAreaId(parkingAreaId)
                 .type(type)
                 .build();
         parkingRepository.save(newParking);
 
+        // 멤버 주차 상태 변경
         member.setParking(true);
         memberRepository.save(member);
+
+        // 생성된 주차 아이디 반환
+        return newParking.getParkingAreaId();
     }
 
     // 주차 삭제하기
-    public void deleteParking(Long memberId, Long parkingAreaId) {
+    public Long deleteParking(Long memberId, Long parkingAreaId) {
         Member member = findMemberById(memberId);
-        Parking parking = findParkingById(parkingAreaId);
 
+        // 주차 정보가 존재하는지 확인
         Parking parkingToDelete = parkingRepository.findParkingByParkingAreaIdAndMember(parkingAreaId, memberId)
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.NOT_FOUND_PARKING));
 
+        // 주차 삭제
         parkingRepository.delete(parkingToDelete);
 
+        // 멤버의 주차 상태 변경
         member.setParking(false);
         memberRepository.save(member);
+
+        // 삭제된 주차 아이디 반환
+        return parkingToDelete.getParkingAreaId();
     }
 
     // 현재 주차된 주차장 정보 불러오기
