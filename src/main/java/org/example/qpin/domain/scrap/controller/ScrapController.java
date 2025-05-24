@@ -1,53 +1,56 @@
 package org.example.qpin.domain.scrap.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.qpin.domain.scrap.dto.ScrapResponseDto;
+import org.example.qpin.domain.scrap.dto.*;
 import org.example.qpin.domain.scrap.service.ScrapService;
 import org.example.qpin.global.common.response.CommonResponse;
 import org.example.qpin.global.common.response.ResponseCode;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("scrap")
+@Validated
 public class ScrapController {
 
     private final ScrapService scrapService;
 
     // [Post] 주차장 스크랩 추가
-    @PostMapping("/{parkId}/{memberId}")
-    public CommonResponse<Map<String, String>> addScrap(@PathVariable("memberId") Long memberId, @PathVariable("parkId") Long parkId) {
-        Long newScrap = scrapService.postScrap(memberId, parkId);
+    @PostMapping
+    public CommonResponse<addScrapResDto> addScrap(@Valid @RequestBody addScrapReqDto requestDto) {
+        Long newScrapId = scrapService.postScrap(requestDto.getMemberId(), requestDto.getParkId());
 
-        Map<String, String> result = new HashMap<>();
-        result.put("parkingId", String.valueOf(newScrap));
-        result.put("message", "즐겨찾기에 추가되었습니다.");
+        addScrapResDto responseDto = addScrapResDto.builder()
+                .scrapId(newScrapId)
+                .message("즐겨찾기에 추가되었습니다.")
+                .build();
 
-        return new CommonResponse<>(ResponseCode.SUCCESS, result);
+        return new CommonResponse<>(ResponseCode.SUCCESS, responseDto);
     }
 
     // [Get] 스크랩 리스트
     @GetMapping("/{memberId}")
-    public CommonResponse<List<ScrapResponseDto>> getScrapByMember(@PathVariable Long memberId) {
-        List<ScrapResponseDto> scrapList = scrapService.getScrapList(memberId);
+    public CommonResponse<List<getScrapResDto>> getScrapByMember(@Valid @RequestBody getScrapReqDto requestDto)  {
+        List<getScrapResDto> scrapList = scrapService.getScrapList(requestDto.getMemberId());
         return new CommonResponse<>(ResponseCode.SUCCESS, scrapList);
     }
 
     // [Delete] 스크랩 삭제
     @DeleteMapping("/{scrapId}")
-    public CommonResponse<Map<String, String>> deleteScrap(@PathVariable Long scrapId) {
-        Long deletedScrap = scrapService.deleteScrap(scrapId);
+    public CommonResponse<deleteScrapResDto> deleteScrap(@Valid @RequestBody deleteScrapReqDto requestDto) {
+        Long deletedScrap = scrapService.deleteScrap(requestDto.getScrapId());
 
-        Map<String, String> result = new HashMap<>();
-        result.put("parkingId", String.valueOf(deletedScrap));
-        result.put("message", "즐겨찾기에서 삭제되었습니다.");
+        deleteScrapResDto responseDto = deleteScrapResDto.builder()
+                .parkingId(deletedScrap)
+                .message("즐겨찾기에서 삭제되었습니다.")
+                .build();
 
-        return new CommonResponse<>(ResponseCode.SUCCESS, result);
+        return new CommonResponse<>(ResponseCode.SUCCESS, responseDto);
     }
 }

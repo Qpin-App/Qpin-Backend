@@ -3,7 +3,7 @@ package org.example.qpin.domain.scrap.service;
 import lombok.RequiredArgsConstructor;
 import org.example.qpin.domain.member.entity.Member;
 import org.example.qpin.domain.parking.entity.Parking;
-import org.example.qpin.domain.scrap.dto.ScrapResponseDto;
+import org.example.qpin.domain.scrap.dto.getScrapResDto;
 import org.example.qpin.domain.scrap.entity.Scrap;
 import org.example.qpin.global.common.repository.MemberRepository;
 import org.example.qpin.global.common.repository.ParkingRepository;
@@ -47,12 +47,12 @@ public class ScrapService {
         return newScrap.getScrapId();
     }
 
-    public List<ScrapResponseDto> getScrapList(Long memberId) {
+    public List<getScrapResDto> getScrapList(Long memberId) {
         findMemberById(memberId);
         List<Scrap> scrapList = scrapRepository.findAllByMember(memberId);
 
         return scrapList.stream()
-                .map(scrap -> ScrapResponseDto.builder()
+                .map(scrap -> getScrapResDto.builder()
                         .scrapId(scrap.getScrapId())
                         .parkingId(scrap.getParking().getParkingAreaId())
                         .build())

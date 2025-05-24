@@ -5,7 +5,9 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ScrapResponseDto {
-    private Long scrapId;
+public class deleteScrapResDto {
+
     private Long parkingId;
+    private String message;
+
 }
