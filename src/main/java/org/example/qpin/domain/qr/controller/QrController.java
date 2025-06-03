@@ -21,36 +21,28 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class QrController {
-
     private final SafePhoneNumberService safePhoneNumberService;
     private final QrService qrService;
 
     @PostMapping("/qr/create")
     @Operation(summary = "QR코드 생성", description = "QR코드 생성")
     ResponseEntity<String> createQr(@RequestBody CreateQrRequestDto request) throws WriterException, IOException {
-
-        SafePhoneNumber safePhoneNumber = safePhoneNumberService.findByPhoneNum(request.getPhoneNum());
-        Qr qr = qrService.createQr(safePhoneNumber,request);
-
+//        SafePhoneNumber safePhoneNumber = safePhoneNumberService.findByPhoneNum(request.getPhoneNum());
+        qrService.createQr(request);
         return ResponseEntity.status(HttpStatus.OK).body("QR 생성 완료");
     }
 
     @GetMapping("/qr/{qrId}")
     @Operation(summary = "QR코드를 핸드폰으로 찍었을때", description = "QR코드를 실제로 핸드폰으로 찍었을 때 연결되는 웹페이지")
     ResponseEntity<QrResponseDto>captureQrcode(@PathVariable("qrId") Long qrId){
-
         Qr qr = qrService.findById(qrId);
-
         QrResponseDto response = new QrResponseDto(qr.getSafePhoneNumber().getSafePhoneNumber(),qr.getMemo());
-
         return ResponseEntity.status(HttpStatus.OK).body(response);
-
     }
 
     @GetMapping("/qr/select/{qrId}")
     @Operation(summary = "QR코드 단건 조회", description = "QR코드 단건 조회")
     ResponseEntity<CheckQrDto> checkQr(@PathVariable("qrId")Long qrId){
-
         CheckQrDto response = qrService.toCheckQrDto(qrId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -58,7 +50,6 @@ public class QrController {
     @GetMapping("/qr/selectList/{memberId}")
     @Operation(summary = "QR코드 리스트 조회", description = "멤버의 모든 QR코드 조회")
     ResponseEntity<List<CheckQrDto>> checkQrList(@PathVariable("memberId")Long memberId){
-
         List<CheckQrDto> response = qrService.toCheckQrDtoList(memberId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -66,20 +57,21 @@ public class QrController {
     @DeleteMapping("/qr/remove/{qrId}")
     @Operation(summary = "QR코드 삭제", description = "QR코드 삭제")
     ResponseEntity<String> removeQr(@PathVariable("qrId") Long qrId){
-
         qrService.removeQr(qrId);
         return ResponseEntity.status(HttpStatus.OK).body("QR코드 삭제 완료");
     }
-
+    
+    @DeleteMapping("/qr/remove")
+    @Operation(summary = "QR코드 일괄 삭제", description = "QR코드 여러 개를 삭제")
+    ResponseEntity<String> removeQrs(@RequestBody List<Long> qrIds){
+        qrService.removeQrs(qrIds);
+        return ResponseEntity.status(HttpStatus.OK).body("QR코드 일괄 삭제 완료");
+    }
+    
     @PutMapping("qr/modify/{qrId}")
     @Operation(summary = "QR코드 수정", description = "QR코드 수정")
     ResponseEntity<String> modifyQr(@PathVariable("qrId") Long qrId,@RequestBody ModifyQrRequestDto request){
-
-
         qrService.modifyQr(qrId,request);
         return ResponseEntity.status(HttpStatus.OK).body("QR코드 수정 완료");
     }
-
-
-
 }

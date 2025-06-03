@@ -16,4 +16,11 @@ public class SafePhoneNumberService {
     public SafePhoneNumber findByPhoneNum(String phoneNum) {
         return safePhoneNumberRepository.findByPhoneNum(phoneNum);
     }
+
+    public SafePhoneNumber create(String phoneNum) {
+        SafePhoneNumber newSafePhoneNumber = SafePhoneNumber.builder()
+                .safePhoneNumber(phoneNum)
+                .build();
+        return safePhoneNumberRepository.save(newSafePhoneNumber);
+    }
 }

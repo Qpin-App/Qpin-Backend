@@ -11,6 +11,7 @@ import org.example.qpin.domain.qr.entity.Sticker;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CheckQrDto {
+    private Long qrId;
 
     private String safePhoneNumber;
 
@@ -20,8 +21,9 @@ public class CheckQrDto {
 
     private Sticker sticker;
 
-    private int gradation; //추후 검토 필요
+    private String gradation; //추후 검토 필요
 
     private byte[] qrImage;
 
+    private String background_picture;
 }

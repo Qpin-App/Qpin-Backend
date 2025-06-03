@@ -48,8 +48,9 @@ public class ScrapService {
     }
 
     public List<ScrapResponseDto> getScrapList(Long memberId) {
-        findMemberById(memberId);
-        List<Scrap> scrapList = scrapRepository.findAllByMember(memberId);
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("회원 없음"));
+        List<Scrap> scrapList = scrapRepository.findAllByMember(member);
 
         return scrapList.stream()
                 .map(scrap -> ScrapResponseDto.builder()
