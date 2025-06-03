@@ -69,11 +69,12 @@ public class Qr extends BaseEntity {
     }
 
     public void modifyQr(String memo,MyColor myColor, Sticker sticker, String gradation,
-                         SafePhoneNumber safePhoneNumber){
+                         String backgroundPicture, SafePhoneNumber safePhoneNumber){
         this.memo = memo;
         this.myColor = myColor;
         this.sticker = sticker;
         this.gradation = gradation;
         this.safePhoneNumber = safePhoneNumber;
+        this.backgroundPicture = backgroundPicture;
     }
 }

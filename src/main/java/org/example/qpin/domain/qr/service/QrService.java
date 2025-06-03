@@ -150,7 +150,7 @@ public class QrService {
 
         Qr qr = qrRepository.findById(qrId).orElseThrow();
         qr.modifyQr(request.getMemo(), request.getMyColor(), request.getSticker(),
-                    request.getGradation(), safePhoneNumber);
+                    request.getGradation(), request.getBackGroundImage(), safePhoneNumber);
 
         qrRepository.save(qr);
     }

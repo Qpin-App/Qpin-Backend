@@ -20,4 +20,6 @@ public class ModifyQrRequestDto {
     private Sticker sticker;
 
     private String gradation;
+
+    private String backGroundImage;
 }
