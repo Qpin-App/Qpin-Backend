@@ -36,7 +36,7 @@ public class Qr extends BaseEntity {
     private String gradation; //추후 검토 필요
 
     @Column
-    private String background_picture;
+    private String backgroundPicture;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="safe_phone_number_id")

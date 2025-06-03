@@ -94,8 +94,15 @@ public class QrService {
     @Transactional
     public CheckQrDto toCheckQrDto(Long qrId) {
         Qr qr = qrRepository.findById(qrId).orElseThrow();
-        CheckQrDto checkQrDto = new CheckQrDto(qr.getSafePhoneNumber().getSafePhoneNumber(),qr.getMemo(),
-                qr.getMyColor(),qr.getSticker(),qr.getGradation(),qr.getQrImage());
+        CheckQrDto checkQrDto = new CheckQrDto(
+                                    qr.getQrId(),
+                                    qr.getSafePhoneNumber().getSafePhoneNumber(),
+                                    qr.getMemo(),
+                                    qr.getMyColor(),
+                                    qr.getSticker(),
+                                    qr.getGradation(),
+                                    qr.getQrImage(),
+                                    qr.getBackgroundPicture());
         return  checkQrDto;
     }
 
@@ -113,12 +120,14 @@ public class QrService {
         List<Qr> qrList = qrRepository.findAllByMember(member);
         List<CheckQrDto> checkQrDtoList = qrList.stream()
                 .map(qr -> new CheckQrDto(
+                        qr.getQrId(),
                         qr.getSafePhoneNumber().getSafePhoneNumber(),
                         qr.getMemo(),
                         qr.getMyColor(),
                         qr.getSticker(),
                         qr.getGradation(),
-                        qr.getQrImage()
+                        qr.getQrImage(),
+                        qr.getBackgroundPicture()
                 ))
                 .collect(Collectors.toList());
 

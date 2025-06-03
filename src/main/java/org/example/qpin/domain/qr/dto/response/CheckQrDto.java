@@ -11,6 +11,7 @@ import org.example.qpin.domain.qr.entity.Sticker;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CheckQrDto {
+    private Long qrId;
 
     private String safePhoneNumber;
 
@@ -24,4 +25,5 @@ public class CheckQrDto {
 
     private byte[] qrImage;
 
+    private String background_picture;
 }
