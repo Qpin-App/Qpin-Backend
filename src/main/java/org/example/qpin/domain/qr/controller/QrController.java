@@ -27,8 +27,8 @@ public class QrController {
     @PostMapping("/qr/create")
     @Operation(summary = "QR코드 생성", description = "QR코드 생성")
     ResponseEntity<String> createQr(@RequestBody CreateQrRequestDto request) throws WriterException, IOException {
-        SafePhoneNumber safePhoneNumber = safePhoneNumberService.findByPhoneNum(request.getPhoneNum());
-        Qr qr = qrService.createQr(safePhoneNumber,request);
+//        SafePhoneNumber safePhoneNumber = safePhoneNumberService.findByPhoneNum(request.getPhoneNum());
+        qrService.createQr(request);
         return ResponseEntity.status(HttpStatus.OK).body("QR 생성 완료");
     }
 

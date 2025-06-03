@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.example.qpin.domain.qr.entity.MyColor;
 import org.example.qpin.domain.qr.entity.Sticker;
+import org.example.qpin.domain.safephonenumber.entity.SafePhoneNumber;
 
 @Builder
 @Getter

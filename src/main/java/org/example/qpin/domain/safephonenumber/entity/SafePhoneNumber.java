@@ -30,4 +30,8 @@ public class SafePhoneNumber extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    public SafePhoneNumber(String safePhoneNumber, String phoneNum) {
+        this.safePhoneNumber = safePhoneNumber;
+        this.phoneNum = phoneNum;
+    }
 }
