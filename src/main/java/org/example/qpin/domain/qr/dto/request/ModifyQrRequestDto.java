@@ -19,5 +19,5 @@ public class ModifyQrRequestDto {
 
     private Sticker sticker;
 
-    private int gradation;
+    private String gradation;
 }

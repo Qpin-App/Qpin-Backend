@@ -20,7 +20,7 @@ public class CheckQrDto {
 
     private Sticker sticker;
 
-    private int gradation; //추후 검토 필요
+    private String gradation; //추후 검토 필요
 
     private byte[] qrImage;
 

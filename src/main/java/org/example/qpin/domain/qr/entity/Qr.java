@@ -33,7 +33,7 @@ public class Qr extends BaseEntity {
     private Sticker sticker;
 
     @Column
-    private int gradation; //추후 검토 필요
+    private String gradation; //추후 검토 필요
 
     @Column
     private String background_picture;
@@ -50,7 +50,7 @@ public class Qr extends BaseEntity {
     @Comment("QR 이미지")
     private byte[] qrImage;
 
-    public Qr(Member member,String memo,MyColor myColor, Sticker sticker, int gradation, SafePhoneNumber safePhoneNumber){
+    public Qr(Member member,String memo,MyColor myColor, Sticker sticker, String gradation, SafePhoneNumber safePhoneNumber){
         this.member = member;
         this.memo = memo;
         this.myColor = myColor;
@@ -67,7 +67,7 @@ public class Qr extends BaseEntity {
         this.qrImage = qrImage;
     }
 
-    public void modifyQr(String memo,MyColor myColor, Sticker sticker, int gradation,
+    public void modifyQr(String memo,MyColor myColor, Sticker sticker, String gradation,
                          SafePhoneNumber safePhoneNumber){
         this.memo = memo;
         this.myColor = myColor;

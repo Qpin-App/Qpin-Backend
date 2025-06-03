@@ -19,7 +19,7 @@ public class CreateQrRequestDto {
 
     private Sticker sticker;
 
-    private int gradation;
+    private String gradation;
 
     private Long memberId;  // 임시
 }
