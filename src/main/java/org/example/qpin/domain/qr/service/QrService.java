@@ -41,11 +41,12 @@ public class QrService {
 
     @Transactional
     public Qr createQr(SafePhoneNumber safePhoneNumber, CreateQrRequestDto request) throws WriterException, IOException{
-
+        // 유저 유효성 검사
         Member member = memberRepository.findById(request.getMemberId()).orElseThrow(() -> new BadRequestException(NOT_FOUND_MEMBER_ID));
 
+        // QR 엔터티 생성 및 저장
         Qr qr = new Qr(member, request.getMemo(), request.getMyColor(), request.getSticker(),
-                request.getGradation(), safePhoneNumber);
+                request.getGradation(), request.getBackgroundPicture() ,safePhoneNumber);
         qrRepository.save(qr);
 
         String qrUrl = "http://localhost:8080/qr/"+ qr.getQrId();
@@ -54,7 +55,6 @@ public class QrService {
         byte[] qrImage = generateQRCodeImage(qrUrl);
         qr.setQrImage(qrImage);
 
-        qrRepository.save(qr);
         return qr;
     }
 

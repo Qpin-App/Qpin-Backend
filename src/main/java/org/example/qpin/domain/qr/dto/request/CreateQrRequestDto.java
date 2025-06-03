@@ -9,6 +9,8 @@ import org.example.qpin.domain.qr.entity.Sticker;
 @Builder
 @Getter
 public class CreateQrRequestDto {
+    private Long memberId;  // 임시
+
     private String safePhoneNum;
 
     private String phoneNum;
@@ -21,5 +23,5 @@ public class CreateQrRequestDto {
 
     private String gradation;
 
-    private Long memberId;  // 임시
+    private String backgroundPicture;
 }

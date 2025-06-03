@@ -50,13 +50,14 @@ public class Qr extends BaseEntity {
     @Comment("QR 이미지")
     private byte[] qrImage;
 
-    public Qr(Member member,String memo,MyColor myColor, Sticker sticker, String gradation, SafePhoneNumber safePhoneNumber){
+    public Qr(Member member,String memo,MyColor myColor, Sticker sticker, String gradation, String backgroundPicture, SafePhoneNumber safePhoneNumber){
         this.member = member;
         this.memo = memo;
         this.myColor = myColor;
         this.sticker = sticker;
         this.gradation = gradation;
         this.safePhoneNumber = safePhoneNumber;
+        this.backgroundPicture = backgroundPicture;
     }
 
     public void setQrUrl(String qrUrl){
