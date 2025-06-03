@@ -70,7 +70,14 @@ public class QrController {
         qrService.removeQr(qrId);
         return ResponseEntity.status(HttpStatus.OK).body("QR코드 삭제 완료");
     }
-
+    
+    @DeleteMapping("/qr/remove")
+    @Operation(summary = "QR코드 일괄 삭제", description = "QR코드 여러 개를 삭제")
+    ResponseEntity<String> removeQrs(@RequestBody List<Long> qrIds){
+        qrService.removeQrs(qrIds);
+        return ResponseEntity.status(HttpStatus.OK).body("QR코드 일괄 삭제 완료");
+    }
+    
     @PutMapping("qr/modify/{qrId}")
     @Operation(summary = "QR코드 수정", description = "QR코드 수정")
     ResponseEntity<String> modifyQr(@PathVariable("qrId") Long qrId,@RequestBody ModifyQrRequestDto request){

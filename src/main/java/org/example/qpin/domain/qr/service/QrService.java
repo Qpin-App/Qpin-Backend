@@ -129,6 +129,13 @@ public class QrService {
         qrRepository.deleteById(qrId);
     }
 
+    public void removeQrs(List<Long> qrIds) {
+        for (Long qrId : qrIds){
+            qrRepository.deleteById(qrId);
+        }
+    }
+
+
     public void modifyQr(Long qrId, ModifyQrRequestDto request) {
         SafePhoneNumber safePhoneNumber = safePhoneNumberRepository.findByPhoneNum(request.getPhoneNum());
 
