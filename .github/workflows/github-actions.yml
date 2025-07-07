@@ -48,7 +48,7 @@ jobs:
           password: ${{ secrets.DOCKER_TOKEN }}
 
       - name: Build docker image
-        run: docker build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/qpin_server .
+        run: docker build --platform linux/amd64 --build-arg PROFILES=prod --build-arg ENV=prod -t ${{ secrets.DOCKER_USERNAME }}/qpin_server .
 
       - name: Publish image to docker hub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/qpin_server:latest
@@ -61,11 +61,13 @@ jobs:
         run: |
           STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.QPIN_SERVER_IP }}/env")
           echo $STATUS
+          
           if [ $STATUS = 200 ]; then
             CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.QPIN_SERVER_IP }}/env")
           else
             CURRENT_UPSTREAM=green
           fi
+          
           echo CURRENT_UPSTREAM=$CURRENT_UPSTREAM >> $GITHUB_ENV
           if [ $CURRENT_UPSTREAM = blue ]; then
             echo "CURRENT_PORT=8080" >> $GITHUB_ENV
