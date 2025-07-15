@@ -91,6 +91,8 @@ jobs:
             echo "ENV=prod" > $ENV_PATH
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> $ENV_PATH
             echo "DB_URL=${{ secrets.DB_URL }}" >> $ENV_PATH
+            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> $ENV_PATH
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $ENV_PATH
 
       - name: Docker Compose
         uses: appleboy/ssh-action@master

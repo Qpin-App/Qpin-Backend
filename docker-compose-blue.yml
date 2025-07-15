@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   blue:
-    image: your-dockerhub-username/qpin_server:latest
+    image: mingkiboo/qpin_server:latest
     container_name: blue
     ports:
       - "8080:8080"
