@@ -190,7 +190,7 @@ public class ParkingService {
         Parking parking = findParkingById(parkingAreaId);
 
         // 주차 정보가 존재하는지 확인
-        Parking parkingToDelete = parkingRepository.findParkingByParkingAreaIdAndMember(parking.getParkingAreaId(), memberId)
+        Parking parkingToDelete = parkingRepository.findParkingByParkingAreaIdAndMember_Id(parking.getParkingAreaId(), memberId)
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.NOT_FOUND_PARKING));
 
         // 주차 삭제
