@@ -14,6 +14,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
@@ -30,6 +31,9 @@ public class ParkingService {
     private final ParkingRepository parkingRepository;
     private final MemberRepository memberRepository;
     private final ScrapRepository scrapRepository;
+
+    @Value("${PUBLIC_API_KEY}")
+    private String apiKey;
 
     public Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(() -> new BadRequestException(ExceptionCode.NOT_FOUND_MEMBER_ID));
@@ -53,12 +57,11 @@ public class ParkingService {
         // 공공포털에서 데이터 가져오기
         final int page=1;
         final int perPage=150;
-        final String DECODING_KEY="yncOh3M5FtqbW1UwmQmkBKpkkyYqZMj1FddwHcalnFzVCFtnlwkDOhRPFHkhnJPRKYy4scMVfbJMxn954Ym/Eg=="; // 키 암호화 필요
-        final String API_URL="https://api.odcloud.kr/api/15050093/v1/uddi:d19c8e21-4445-43fe-b2a6-865dff832e08?"
+        final String API_URL="https://api.data.go.kr/openapi/tn_pubr_prkplce_info_api"
                 +"page="        + page
                 +"&perPage="    + perPage
                 +"&cond%5B%EC%A7%80%EC%97%AD%EC%BD%94%EB%93%9C%3A%3AEQ%5D=" + regionCode
-                +"&serviceKey=" + DECODING_KEY;
+                +"&serviceKey=" + apiKey;
 
         DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory(API_URL);
         factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.VALUES_ONLY);
@@ -90,7 +93,7 @@ public class ParkingService {
             dataList = (JSONArray) jsonObject.get("data");
         } catch (Exception e) {
             // JSON 파싱 오류 시 500번대 에러 반환
-            throw new BadRequestException(ExceptionCode.INTERNAL_SEVER_ERROR);
+            throw new BadRequestException(ExceptionCode.SEVER_ERROR);
         }
 
         // 데이터가 없으면 빈 리스트로 반환
