@@ -7,7 +7,7 @@ spring:
       green: green, common, secret
 
   datasource:
-    url: jdbc:mysql://localhost:3306/qpin
+    url: jdbc:mysql://${QPIN_SERVER_IP}:3306/qpin
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
