@@ -30,7 +30,8 @@ public enum ExceptionCode {
     NOT_FOUND_PHOTO(5104, "사진을 찾을 수 없습니다."),
 
     // 주차 에러
-    NOT_FOUND_PARKING(6001, "요청한 주차ID와 멤버ID에 해당하는 정보가 존재하지 않습니다."),
+    NOT_FOUND_PARKING(6000, "요청한 ID에 해당하는 주차장이 존재하지 않습니다."),
+    NOT_FOUND_PARKING_INFO(6001, "요청한 주차ID와 멤버ID에 해당하는 정보가 존재하지 않습니다."),
 
     INVALID_USER_NAME(8001, "존재하지 않는 사용자입니다."),
     INVALID_PASSWORD(8002, "비밀번호가 일치하지 않습니다."),
@@ -52,6 +53,7 @@ public enum ExceptionCode {
     NOT_FOUND_REFRESH_TOKEN(9106, "RefreshToken이 존재하지 않습니다."),
     INVALID_AUTHORITY(9201, "해당 요청에 대한 접근 권한이 없습니다."),
 
+    SEVER_ERROR(9990, "공공데이터를 불러오는 중 오류가 발생했습니다."),
     INTERNAL_SEVER_ERROR(9999, "서버 에러가 발생하였습니다. 관리자에게 문의해 주세요.");
 
     private final int code;
