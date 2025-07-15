@@ -48,8 +48,8 @@ public class ScrapService {
     }
 
     public List<getScrapResDto> getScrapList(Long memberId) {
-        findMemberById(memberId);
-        List<Scrap> scrapList = scrapRepository.findAllByMember(memberId);
+        Member member = findMemberById(memberId);
+        List<Scrap> scrapList = scrapRepository.findAllByMember(member);
 
         return scrapList.stream()
                 .map(scrap -> getScrapResDto.builder()
