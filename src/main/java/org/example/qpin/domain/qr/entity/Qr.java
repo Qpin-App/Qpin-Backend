@@ -33,10 +33,10 @@ public class Qr extends BaseEntity {
     private Sticker sticker;
 
     @Column
-    private int gradation; //추후 검토 필요
+    private String gradation; //추후 검토 필요
 
     @Column
-    private String background_picture;
+    private String backgroundPicture;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="safe_phone_number_id")
@@ -50,13 +50,14 @@ public class Qr extends BaseEntity {
     @Comment("QR 이미지")
     private byte[] qrImage;
 
-    public Qr(Member member,String memo,MyColor myColor, Sticker sticker, int gradation, SafePhoneNumber safePhoneNumber){
+    public Qr(Member member,String memo,MyColor myColor, Sticker sticker, String gradation, String backgroundPicture, SafePhoneNumber safePhoneNumber){
         this.member = member;
         this.memo = memo;
         this.myColor = myColor;
         this.sticker = sticker;
         this.gradation = gradation;
         this.safePhoneNumber = safePhoneNumber;
+        this.backgroundPicture = backgroundPicture;
     }
 
     public void setQrUrl(String qrUrl){
@@ -67,12 +68,13 @@ public class Qr extends BaseEntity {
         this.qrImage = qrImage;
     }
 
-    public void modifyQr(String memo,MyColor myColor, Sticker sticker, int gradation,
-                         SafePhoneNumber safePhoneNumber){
+    public void modifyQr(String memo,MyColor myColor, Sticker sticker, String gradation,
+                         String backgroundPicture, SafePhoneNumber safePhoneNumber){
         this.memo = memo;
         this.myColor = myColor;
         this.sticker = sticker;
         this.gradation = gradation;
         this.safePhoneNumber = safePhoneNumber;
+        this.backgroundPicture = backgroundPicture;
     }
 }

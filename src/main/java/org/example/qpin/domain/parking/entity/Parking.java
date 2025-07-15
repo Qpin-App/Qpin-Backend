@@ -1,10 +1,8 @@
 package org.example.qpin.domain.parking.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+import org.example.qpin.domain.member.entity.Member;
 import org.example.qpin.global.common.BaseEntity;
 
 @Entity
@@ -19,4 +17,11 @@ public class Parking extends BaseEntity {
     private Long parkingAreaId;
 
     private String type;
+
+    @Column(name = "is_parking")
+    private boolean isParking;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 }

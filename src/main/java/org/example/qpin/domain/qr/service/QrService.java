@@ -40,12 +40,17 @@ public class QrService {
     private final SafePhoneNumberRepository safePhoneNumberRepository;
 
     @Transactional
-    public Qr createQr(SafePhoneNumber safePhoneNumber, CreateQrRequestDto request) throws WriterException, IOException{
-
+    public Qr createQr(CreateQrRequestDto request) throws WriterException, IOException{
+        // 유저 유효성 검사
         Member member = memberRepository.findById(request.getMemberId()).orElseThrow(() -> new BadRequestException(NOT_FOUND_MEMBER_ID));
 
+        SafePhoneNumber safePhoneNumber = safePhoneNumberRepository.findByPhoneNum(request.getPhoneNum());
+        if (safePhoneNumber == null) {
+            safePhoneNumber = safePhoneNumberRepository.save(new SafePhoneNumber(request.getSafePhoneNum(), request.getPhoneNum()));
+        }
+        // QR 엔터티 생성 및 저장
         Qr qr = new Qr(member, request.getMemo(), request.getMyColor(), request.getSticker(),
-                request.getGradation(), safePhoneNumber);
+                request.getGradation(), request.getBackgroundPicture() ,safePhoneNumber);
         qrRepository.save(qr);
 
         String qrUrl = "http://localhost:8080/qr/"+ qr.getQrId();
@@ -54,7 +59,6 @@ public class QrService {
         byte[] qrImage = generateQRCodeImage(qrUrl);
         qr.setQrImage(qrImage);
 
-        qrRepository.save(qr);
         return qr;
     }
 
@@ -93,9 +97,20 @@ public class QrService {
 
     @Transactional
     public CheckQrDto toCheckQrDto(Long qrId) {
-        Qr qr = qrRepository.findById(qrId).orElseThrow();
-        CheckQrDto checkQrDto = new CheckQrDto(qr.getSafePhoneNumber().getSafePhoneNumber(),qr.getMemo(),
-                qr.getMyColor(),qr.getSticker(),qr.getGradation(),qr.getQrImage());
+        Qr qr = qrRepository.findById(qrId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 QR 코드가 존재하지 않습니다. qrId = " + qrId));
+        SafePhoneNumber safePhoneNumber = qr.getSafePhoneNumber();
+        String safePhoneNum = (safePhoneNumber != null) ? safePhoneNumber.getSafePhoneNumber() : null;
+
+        CheckQrDto checkQrDto = new CheckQrDto(
+                                    qr.getQrId(),
+                                    safePhoneNum,
+                                    qr.getMemo(),
+                                    qr.getMyColor(),
+                                    qr.getSticker(),
+                                    qr.getGradation(),
+                                    qr.getQrImage(),
+                                    qr.getBackgroundPicture());
         return  checkQrDto;
     }
 
@@ -113,12 +128,14 @@ public class QrService {
         List<Qr> qrList = qrRepository.findAllByMember(member);
         List<CheckQrDto> checkQrDtoList = qrList.stream()
                 .map(qr -> new CheckQrDto(
+                        qr.getQrId(),
                         qr.getSafePhoneNumber().getSafePhoneNumber(),
                         qr.getMemo(),
                         qr.getMyColor(),
                         qr.getSticker(),
                         qr.getGradation(),
-                        qr.getQrImage()
+                        qr.getQrImage(),
+                        qr.getBackgroundPicture()
                 ))
                 .collect(Collectors.toList());
 
@@ -129,12 +146,19 @@ public class QrService {
         qrRepository.deleteById(qrId);
     }
 
+    public void removeQrs(List<Long> qrIds) {
+        for (Long qrId : qrIds){
+            qrRepository.deleteById(qrId);
+        }
+    }
+
+
     public void modifyQr(Long qrId, ModifyQrRequestDto request) {
         SafePhoneNumber safePhoneNumber = safePhoneNumberRepository.findByPhoneNum(request.getPhoneNum());
 
         Qr qr = qrRepository.findById(qrId).orElseThrow();
         qr.modifyQr(request.getMemo(), request.getMyColor(), request.getSticker(),
-                    request.getGradation(), safePhoneNumber);
+                    request.getGradation(), request.getBackGroundImage(), safePhoneNumber);
 
         qrRepository.save(qr);
     }

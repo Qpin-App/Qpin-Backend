@@ -214,7 +214,7 @@ public class ParkingService {
         }
 
         // 멤버가 주차 중인 주차장 정보를 가져옴
-        Parking parking = parkingRepository.findParkingByMemberIdAndIsParkingTrue(memberId)
+        Parking parking = parkingRepository.findByMember_MemberIdAndIsParkingTrue(memberId)
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.NOT_FOUND_PARKING));
 
         // 주차 시작 시간 및 기타 정보를 가져옴
