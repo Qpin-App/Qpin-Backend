@@ -79,6 +79,19 @@ jobs:
             echo "TARGET_UPSTREAM=blue" >> $GITHUB_ENV
           fi
 
+      - name: Generate .env file
+        uses: appleboy/ssh-action@master
+        with:
+          username: ubuntu
+          host: ${{ secrets.QPIN_SERVER_IP }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script_stop: true
+          script: |
+            ENV_PATH="/home/ubuntu/.env"
+            echo "ENV=prod" > $ENV_PATH
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> $ENV_PATH
+            echo "DB_URL=${{ secrets.DB_URL }}" >> $ENV_PATH
+
       - name: Docker Compose
         uses: appleboy/ssh-action@master
         with:
