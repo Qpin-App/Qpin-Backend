@@ -46,7 +46,7 @@ spring:
 
 server:
   port: 8080
-  serverAddress: ${SERVER_ADDRESS}
+  serverAddress: ${QPIN_SERVER_IP}
 
 serverName: blue_server
 
@@ -59,7 +59,7 @@ spring:
 
 server:
   port: 8081
-  serverAddress: ${SERVER_ADDRESS}
+  serverAddress: ${QPIN_SERVER_IP}
 
 serverName: green_server
 

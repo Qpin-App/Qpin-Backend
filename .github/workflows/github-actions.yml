@@ -94,6 +94,7 @@ jobs:
             echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> $ENV_PATH
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $ENV_PATH
             echo "QPIN_SERVER_IP=${{ secrets.QPIN_SERVER_IP }}" >> $ENV_PATH
+            echo "PUBLIC_API_KEY=${{ secrets.PUBLIC_API_KEY }}" >> $ENV_PATH
 
       - name: Docker Compose
         uses: appleboy/ssh-action@master
