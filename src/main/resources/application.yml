@@ -69,4 +69,5 @@ spring:
   config:
     activate:
       on-profile: common
-
+  jwt:
+    secret: ${JWT_SECRET}
