@@ -16,7 +16,10 @@ public class JWTUtil {
 
     private final SecretKey secretKey;
 
-    public JWTUtil(@Value("${spring.jwt.secret}") String secret) {
+    public JWTUtil(@Value("${JWT_SECRET}") String secret) {
+        if (secret == null || secret.isEmpty() || secret.equals("${JWT_SECRET}")) {
+            throw new IllegalArgumentException("JWT secret cannot be null, empty, or unresolvable placeholder.");
+        } // 변수 잘 넘어오는지 확인
         byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
