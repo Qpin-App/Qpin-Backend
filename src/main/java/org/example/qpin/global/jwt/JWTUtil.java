@@ -2,6 +2,7 @@ package org.example.qpin.global.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -22,11 +23,11 @@ public class JWTUtil {
 
     private Claims getClaims(String token) {
         return Jwts
-                .parserBuilder()
-                .setSigningKey(secretKey)
+                .parser()
+                .verifyWith(secretKey)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     public String getUsername(String token) {
@@ -61,7 +62,7 @@ public class JWTUtil {
                 .claim("role", role)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiredMs))
-                .signWith(secretKey) // 0.12.x부터는 알고리즘 자동 인식
+                .signWith(secretKey, SignatureAlgorithm.HS256) // HS256 알고리즘 명시
                 .compact();
     }
 }
