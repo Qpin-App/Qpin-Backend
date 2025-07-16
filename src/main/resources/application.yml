@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local    # 디폴트로 로드
+    active: local # 디폴트 활성 프로필 설정
     group:
       local: local, common, secret
       blue: blue, common, secret
@@ -22,7 +22,7 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
 server:
-  env: blue
+  env: blue # 이 값은 docker-compose.yml의 SERVER_ENV 환경 변수로 오버라이드될 수 있습니다.
 
 ---
 
