@@ -1,13 +1,28 @@
 spring:
   profiles:
-    active: local    # 디폴트로 로드
+    active: local # 디폴트 활성 프로필 설정
     group:
       local: local, common, secret
       blue: blue, common, secret
       green: green, common, secret
 
+  datasource:
+    url: jdbc:mysql://${QPIN_SERVER_IP}:3306/qpin
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
 server:
-  env: blue
+  env: blue # 이 값은 docker-compose.yml의 SERVER_ENV 환경 변수로 오버라이드될 수 있습니다.
 
 ---
 
@@ -31,7 +46,7 @@ spring:
 
 server:
   port: 8080
-  serverAddress: 43.200.208.136
+  serverAddress: ${QPIN_SERVER_IP}
 
 serverName: blue_server
 
@@ -44,7 +59,7 @@ spring:
 
 server:
   port: 8081
-  serverAddress: 43.200.208.136
+  serverAddress: ${QPIN_SERVER_IP}
 
 serverName: green_server
 
@@ -54,4 +69,5 @@ spring:
   config:
     activate:
       on-profile: common
-
+  jwt:
+    secret: ${JWT_SECRET}

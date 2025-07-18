@@ -5,12 +5,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CarPhotoResponseDto {
-    private Long carPhotoId;
-    private String carPhotoUrl;
-    private String parkingArea;
+@Builder
+public class DeletePhotoResDto {
+    private Long photoId;
+    private String message;
 }

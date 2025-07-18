@@ -3,6 +3,7 @@ package org.example.qpin.domain.carphoto.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.qpin.domain.member.entity.Member;
+import org.example.qpin.domain.parking.entity.Parking;
 import org.example.qpin.global.common.BaseEntity;
 
 @Entity
@@ -14,13 +15,14 @@ public class CarPhoto extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long carPhotoId;
+    private Long photoId;
 
     @Column(nullable = false)
-    private String carPhotoUrl;
+    private String photoUrl;
 
-    @Column(length = 50, nullable = false)
-    private String parkingArea;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parking_area_id")
+    private Parking parking;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

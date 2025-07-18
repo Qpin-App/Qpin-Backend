@@ -4,71 +4,68 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
-import org.example.qpin.domain.member.entity.Member;
-import org.example.qpin.global.common.repository.MemberRepository;
-import org.example.qpin.global.exception.BadRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.Optional;
-
-import static org.example.qpin.global.exception.ExceptionCode.INVALID_USER_NAME;
 
 @Component
 public class JWTUtil {
 
-    private SecretKey secretKey;
+    private final SecretKey secretKey;
 
-    public JWTUtil(@Value("${spring.jwt.secret}")String secret) {
+    public JWTUtil(@Value("${JWT_SECRET}") String secret) {
+        if (secret == null || secret.isEmpty() || secret.equals("${JWT_SECRET}")) {
+            throw new IllegalArgumentException("JWT secret cannot be null, empty, or unresolvable placeholder.");
+        } // 변수 잘 넘어오는지 확인
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+        this.secretKey = Keys.hmacShaKeyFor(keyBytes);
+    }
 
-        secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
+    private Claims getClaims(String token) {
+        return Jwts
+                .parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     public String getUsername(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
+        return getClaims(token).get("username", String.class);
     }
 
     public String getRole(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
+        return getClaims(token).get("role", String.class);
     }
 
     public String getEmail(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("email", String.class);
+        return getClaims(token).get("email", String.class);
     }
 
     public String getPhoneNumber(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("phoneNumber", String.class);
+        return getClaims(token).get("phoneNumber", String.class);
     }
 
     public String getCategory(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
+        return getClaims(token).get("category", String.class);
     }
 
-    // jwt 만료 여부 확인 : 토큰 만료 시, true
     public Boolean isExpired(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+        return getClaims(token).getExpiration().before(new Date());
     }
 
     public String createJwt(String category, String username, String role, Long expiredMs) {
-
-        return Jwts.builder()
+        return Jwts
+                .builder()
                 .claim("category", category)
                 .claim("username", username)
                 .claim("role", role)
-                .issuedAt(new Date(System.currentTimeMillis()))                 // 발급 시간
-                .expiration(new Date(System.currentTimeMillis() + expiredMs))   // 만료 시간
-                .signWith(secretKey)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiredMs))
+                .signWith(secretKey, SignatureAlgorithm.HS256) // HS256 알고리즘 명시
                 .compact();
     }
 }
